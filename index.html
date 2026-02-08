@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0506">
+  <title>For Katie</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      background: #0a0506;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      background: #0a0506;
+      font-family: 'Cormorant Garamond', serif;
+      color: #f4e0e8;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Pre-reveal: lock to viewport, centered. Post-reveal: allow scroll */
+    body.locked {
+      overflow: hidden;
+      height: 100dvh;
+    }
+
+    body.scrollable {
+      overflow-y: auto;
+    }
+
+    /* Deep warm ambient glow */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150vmax;
+      height: 150vmax;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(120, 20, 40, 0.3) 0%,
+        rgba(80, 10, 30, 0.15) 30%,
+        rgba(40, 5, 20, 0.08) 50%,
+        transparent 70%
+      );
+      animation: ambientPulse 8s ease-in-out infinite;
+    }
+
+    .ambient::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 50% 30%,
+        rgba(200, 80, 60, 0.06) 0%,
+        transparent 60%
+      );
+      animation: flicker 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes ambientPulse {
+      0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.4; }
+      25% { opacity: 0.7; }
+      50% { opacity: 0.5; }
+      75% { opacity: 0.8; }
+      100% { opacity: 0.6; }
+    }
+
+    /* Rose petals */
+    .petals-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      top: -40px;
+      border-radius: 50% 50% 50% 0;
+      opacity: 0;
+      animation: petalFall linear infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes petalFall {
+      0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 0;
+      }
+      8% { opacity: 0.7; }
+      50% {
+        transform: translateY(50dvh) rotate(180deg) translateX(30px);
+        opacity: 0.5;
+      }
+      85% { opacity: 0.2; }
+      100% {
+        transform: translateY(110dvh) rotate(400deg) translateX(-20px);
+        opacity: 0;
+      }
+    }
+
+    /* Warm sparkle dots */
+    .sparkle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      animation: twinkle ease-in-out infinite;
+      will-change: opacity, transform;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.3); }
+      50% { opacity: 0.9; transform: scale(1.5); }
+    }
+
+    /* Main layout wrapper */
+    .page {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 2rem 1.25rem;
+      padding-top: calc(2rem + env(safe-area-inset-top));
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+    }
+
+    .container {
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    /* "a valentine for" */
+    .for-line {
+      font-weight: 300;
+      font-style: italic;
+      font-size: 0.95rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(210, 140, 160, 0.7);
+      margin-bottom: 0.4rem;
+      animation: softFadeIn 2s ease-out 0.3s both;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #e8a0b0, #d4707a, #c8606e, #e8a0b0);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+      animation: softFadeIn 2s ease-out 0.6s both, shimmer 6s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(200, 150, 165, 0.8);
+      margin-bottom: 2rem;
+      animation: softFadeIn 2s ease-out 0.9s both;
+    }
+
+    /* The letter card */
+    .letter {
+      background: linear-gradient(
+        135deg,
+        rgba(120, 30, 50, 0.1),
+        rgba(80, 15, 30, 0.06),
+        rgba(60, 10, 25, 0.04)
+      );
+      border: 1px solid rgba(180, 80, 100, 0.15);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .letter::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 20px;
+      background: linear-gradient(
+        135deg,
+        rgba(200, 90, 110, 0.2),
+        transparent 40%,
+        transparent 60%,
+        rgba(180, 80, 100, 0.1)
+      );
+      z-index: -1;
+    }
+
+    .letter::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 30% 20%,
+        rgba(200, 100, 120, 0.06),
+        transparent 50%
+      );
+      pointer-events: none;
+    }
+
+    .letter p {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      font-weight: 300;
+      color: rgba(240, 200, 215, 0.9);
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .letter p:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .letter .emphasis {
+      color: #e8a0b0;
+      font-style: italic;
+    }
+
+    .signature {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: #c87080;
+      margin-top: 1.8rem;
+      text-align: right;
+      padding-right: 0.5rem;
+    }
+
+    .signature span {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: rgba(200, 112, 128, 0.6);
+      margin-top: 0.3rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Button — big, easy tap target */
+    .envelope-trigger {
+      cursor: pointer;
+      display: inline-block;
+      padding: 1.1rem 2.8rem;
+      min-height: 56px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: 0.15em;
+      background: linear-gradient(135deg, rgba(180, 60, 80, 0.6), rgba(140, 40, 60, 0.6));
+      color: rgba(255, 220, 230, 0.95);
+      border: 1px solid rgba(200, 100, 120, 0.3);
+      border-radius: 50px;
+      margin-top: 2rem;
+      animation: softFadeIn 2s ease-out 1.2s both;
+      transition: all 0.3s ease;
+      box-shadow:
+        0 4px 30px rgba(160, 40, 60, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      touch-action: manipulation;
+    }
+
+    .envelope-trigger:active {
+      transform: scale(0.97);
+      box-shadow:
+        0 2px 20px rgba(160, 40, 60, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, rgba(200, 70, 90, 0.7), rgba(160, 50, 70, 0.7));
+    }
+
+    .hidden { display: none; }
+
+    .reveal {
+      animation: revealLetter 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    .reveal p {
+      opacity: 0;
+      animation: softFadeIn 1.5s ease-out both;
+    }
+
+    .reveal p:nth-child(1) { animation-delay: 0.4s; }
+    .reveal p:nth-child(2) { animation-delay: 1.2s; }
+    .reveal p:nth-child(3) { animation-delay: 2s; }
+    .reveal p:nth-child(4) { animation-delay: 2.8s; }
+
+    .reveal .signature {
+      opacity: 0;
+      animation: softFadeIn 1.5s ease-out 3.6s both;
+    }
+
+    @keyframes revealLetter {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes softFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Touch ripple */
+    .ripple {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10;
+      background: radial-gradient(circle, rgba(200, 80, 100, 0.15), transparent);
+      animation: rippleOut 0.8s ease-out forwards;
+    }
+
+    @keyframes rippleOut {
+      0% {
+        width: 0; height: 0;
+        opacity: 0.4;
+        transform: translate(-50%, -50%);
+      }
+      100% {
+        width: 150px; height: 150px;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    /* Scale up for larger phones / tablets */
+    @media (min-width: 400px) {
+      h1 { font-size: 3.6rem; }
+      .for-line { font-size: 1.05rem; }
+      .subtitle { font-size: 1.3rem; }
+      .letter { padding: 2.5rem 2rem; }
+      .letter p { font-size: 1.15rem; line-height: 1.9; }
+    }
+
+    @media (min-width: 600px) {
+      .container { max-width: 520px; }
+      h1 { font-size: 4rem; }
+      .for-line { font-size: 1.15rem; }
+      .subtitle { font-size: 1.4rem; }
+      .letter { padding: 3rem 2.5rem; }
+      .letter p { font-size: 1.2rem; line-height: 2; }
+      .signature { font-size: 1.6rem; }
+    }
+
+    /* Small phones (SE, etc) */
+    @media (max-height: 680px) {
+      .for-line { font-size: 0.85rem; margin-bottom: 0.2rem; }
+      h1 { font-size: 2.6rem; margin-bottom: 0.15rem; }
+      .subtitle { font-size: 1rem; margin-bottom: 1.5rem; }
+      .letter p { font-size: 1rem; line-height: 1.75; margin-bottom: 1.2rem; }
+      .letter { padding: 1.5rem 1.25rem; }
+      .page { padding: 1.25rem 1rem; }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <div class="ambient"></div>
+  <div class="petals-layer" id="petalsLayer"></div>
+
+  <div class="page">
+    <div class="container">
+      <div class="for-line" aria-hidden="true">a valentine for</div>
+      <h1>Katie</h1>
+      <p class="subtitle">my beautiful, radiant love</p>
+
+      <div class="letter hidden" id="letter">
+        <p>
+          You have always been the most magnetic woman in any room &mdash;
+          but watching you carry our baby has made you
+          <span class="emphasis">devastatingly beautiful</span> in a way
+          I didn't know was possible.
+        </p>
+        <p>
+          The curve of you. The warmth of you.
+          The way you glow without even trying.
+          I can't stop looking at you, and I never want to.
+        </p>
+        <p>
+          You are building a whole life inside you, and somehow
+          you still make mine feel like the most important thing in
+          the world. That's who you are. That's why I'm yours.
+        </p>
+        <p>
+          Tonight and every night &mdash; I choose you.
+          All of you. Every gorgeous, incredible inch.
+        </p>
+        <div class="signature">
+          Forever &amp; only yours
+          <span>William</span>
+        </div>
+      </div>
+
+      <button class="envelope-trigger" id="openBtn">
+        open your valentine
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Detect mobile for reduced particles
+    const isMobile = window.innerWidth < 600;
+    const petalCount = isMobile ? 15 : 25;
+    const sparkleCount = isMobile ? 20 : 40;
+
+    // Rose petals
+    const petalsLayer = document.getElementById('petalsLayer');
+    const petalColors = [
+      'rgba(180, 50, 70, 0.6)',
+      'rgba(160, 40, 60, 0.5)',
+      'rgba(200, 70, 90, 0.4)',
+      'rgba(140, 30, 50, 0.5)',
+      'rgba(190, 60, 80, 0.45)',
+      'rgba(220, 100, 120, 0.3)',
+    ];
+
+    for (let i = 0; i < petalCount; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.style.left = Math.random() * 100 + '%';
+      petal.style.background = `radial-gradient(ellipse at 30% 30%, ${petalColors[Math.floor(Math.random() * petalColors.length)]}, rgba(80, 15, 25, 0.3))`;
+      petal.style.animationDuration = (10 + Math.random() * 15) + 's';
+      petal.style.animationDelay = (Math.random() * 12) + 's';
+      petal.style.width = (10 + Math.random() * 12) + 'px';
+      petal.style.height = (14 + Math.random() * 12) + 'px';
+      petal.style.filter = `blur(${Math.random() * 1.5}px)`;
+      petalsLayer.appendChild(petal);
+    }
+
+    // Warm sparkles
+    const sparkleColors = [
+      'rgba(255, 180, 190, 0.8)',
+      'rgba(255, 200, 210, 0.6)',
+      'rgba(220, 140, 160, 0.7)',
+      'rgba(255, 160, 180, 0.5)',
+    ];
+
+    for (let i = 0; i < sparkleCount; i++) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = Math.random() * 100 + '%';
+      sparkle.style.top = Math.random() * 100 + '%';
+      sparkle.style.background = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+      sparkle.style.animationDuration = (2 + Math.random() * 4) + 's';
+      sparkle.style.animationDelay = (Math.random() * 5) + 's';
+      const size = (1.5 + Math.random() * 2) + 'px';
+      sparkle.style.width = size;
+      sparkle.style.height = size;
+      document.body.appendChild(sparkle);
+    }
+
+    // Reveal letter
+    document.getElementById('openBtn').addEventListener('click', function () {
+      const letter = document.getElementById('letter');
+      const btn = this;
+
+      btn.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      btn.style.opacity = '0';
+      btn.style.transform = 'scale(0.95)';
+      btn.style.pointerEvents = 'none';
+
+      setTimeout(() => {
+        btn.style.display = 'none';
+        letter.classList.remove('hidden');
+        letter.classList.add('reveal');
+
+        // Unlock scrolling once letter is shown
+        document.body.classList.remove('locked');
+        document.body.classList.add('scrollable');
+
+        // Scroll the letter into nice view after a beat
+        setTimeout(() => {
+          letter.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      }, 500);
+    });
+
+    // Touch ripple
+    document.addEventListener('pointerdown', (e) => {
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 800);
+    });
+  </script>
+</body>
+</html>
